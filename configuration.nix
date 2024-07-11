@@ -114,6 +114,8 @@
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
+    gnomeExtensions.appindicator # tray icon
+    gnomeExtensions.screen-rotate # see https://www.reddit.com/r/starlabs_computers/comments/1dyebde/starlite_mkv_autorotate_solution/
   ];
   # tray
   # services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];

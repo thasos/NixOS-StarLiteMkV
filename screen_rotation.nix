@@ -11,15 +11,16 @@
   hardware.sensor.iio.enable = true;
   #-----------------------
   # need to stop iio-sensor-proxy and trigger udev, no idea why...
-  # TODO needs improvment (sleep after iio-sensor-proxy services started ?)
-  systemd.services.fixiio = {
-    script = ''
-      systemd-hwdb update
-      systemctl stop iio-sensor-proxy.service
-      udevadm trigger -v -p DEVNAME=/dev/iio:device0
-    '';
-    wantedBy = [ "graphical.target" ];
-  };
+  # systemd.services.fixiio = {
+  #   script = ''
+  #     sleep 15
+  #     systemd-hwdb update
+  #     systemctl stop iio-sensor-proxy.service
+  #     udevadm trigger -v -p DEVNAME=/dev/iio:device0
+  #     systemctl start iio-sensor-proxy.service
+  #   '';
+  #   wantedBy = [ "graphical.target" ];
+  # };
   # systemd.services.iio-sensor-proxy.wantedBy = lib.mkForce []; # does not work
   #-----------------------
   # inspired by https://support.starlabs.systems/kb/guides/starlite-fixing-rotation-on-older-kernel
