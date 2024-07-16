@@ -2,37 +2,22 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, lib, ... }:
 
 {
   # screen rotation
   # see https://nixos.wiki/wiki/IIO
   # and https://support.starlabs.systems/kb/guides/starlite-fixing-rotation-on-older-kernel
   hardware.sensor.iio.enable = true;
-  #-----------------------
-  # need to stop iio-sensor-proxy and trigger udev, no idea why...
-  # systemd.services.fixiio = {
-  #   script = ''
-  #     sleep 15
-  #     systemd-hwdb update
-  #     systemctl stop iio-sensor-proxy.service
-  #     udevadm trigger -v -p DEVNAME=/dev/iio:device0
-  #     systemctl start iio-sensor-proxy.service
-  #   '';
-  #   wantedBy = [ "graphical.target" ];
-  # };
-  # systemd.services.iio-sensor-proxy.wantedBy = lib.mkForce []; # does not work
-  #-----------------------
-  # inspired by https://support.starlabs.systems/kb/guides/starlite-fixing-rotation-on-older-kernel
-  environment.etc = {
-    "udev/hwdb.d/21-kiox000a.hwdb"= {
-      text = ''
-        sensor:modalias:acpi:KIOX000A*:dmi:*:*
-          ACCEL_MOUNT_MATRIX=1, 0, 0; 0, -1, 0; 0, 0, 1;
-          ACCEL_LOCATION=display
-      '';
-    };
-  };
+
+  # Requires reboot, and in the case of KDE Plasma 6, checking the option:
+  #	General Behavior > Touch Mode > Always enabled
+  services.udev.extraHwdb = ''
+  sensor:modalias:acpi:KIOX000A*:dmi:*:*
+    ACCEL_MOUNT_MATRIX=1, 0, 0; 0, -1, 0; 0, 0, 1;
+    ACCEL_LOCATION=display
+  '';
+
   #-----------------------
   # DEBUG STUFF
   # ----
@@ -82,4 +67,30 @@
   # '';
   # ----
   # juil. 02 21:59:34 qualinost iio-sensor-prox[2714]: Could not find trigger name associated with /sys/devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-0/i2c-KIOX000A:00/iio:device0
+  # ----
+  # need to stop iio-sensor-proxy and trigger udev, no idea why...
+  # systemd.services.fixiio = {
+  #   script = ''
+  #     sleep 15
+  #     systemd-hwdb update
+  #     systemctl stop iio-sensor-proxy.service
+  #     udevadm trigger -v -p DEVNAME=/dev/iio:device0
+  #     systemctl start iio-sensor-proxy.service
+  #   '';
+  #   wantedBy = [ "graphical.target" ];
+  # };
+  # systemd.services.iio-sensor-proxy.wantedBy = lib.mkForce []; # does not work
+  #-----------------------
+  # inspired by https://support.starlabs.systems/kb/guides/starlite-fixing-rotation-on-older-kernel
+  #environment.etc = {
+  #  "udev/hwdb.d/21-kiox000a.hwdb"= {
+  #    text = ''
+  #      sensor:modalias:acpi:KIOX000A*:dmi:*:*
+  #        ACCEL_MOUNT_MATRIX=1, 0, 0; 0, -1, 0; 0, 0, 1;
+  #        ACCEL_LOCATION=display
+  #    '';
+  #  };
+  #};
 }
+
+
