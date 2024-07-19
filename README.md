@@ -2,9 +2,7 @@
 
 Base Nix configuration that work for this Surface like PC/Tablet.
 
-For now, everything works out of the box except the screen rotation.
-
-I made it functional but it needs more improvements : sometime (rarely) it boots upside down.
+For now, everything works out of the box except the screen rotation, see comments in [screen_rotation.nix](./screen_rotation.nix) for explanations.
 
 DO NOT PASTE THESES FILES, it needs some adjustments (disk uuid, locales, ...)
 
